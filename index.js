@@ -70,15 +70,25 @@ app.post('/api/persons', (req, res) => {
     number: body.number
   })
 
-  person
-    .save()
-    .then(savedPerson => {
-      res.json(Person.format(savedPerson))
+  Person
+    .find({ name: body.name })
+    .then(result => {
+      if (result.length > 0) {
+        res.status(400).json({ error: 'name already exists' })
+      }
+      else {
+        person
+        .save()
+        .then(savedPerson => {
+          res.json(Person.format(savedPerson))
+        })
+        .catch(error => {
+          console.log(error)
+          // ...
+        })
+      }
     })
-    .catch(error => {
-      console.log(error)
-      // ...
-    })
+  
 })
 
 app.delete('/api/persons/:id', (req, res) => {
